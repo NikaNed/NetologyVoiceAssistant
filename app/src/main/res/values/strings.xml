@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">NetVoice</string>
+    <string name="app_name">НеоГолос</string>
     <string name="action_stop_title">Stop</string>
     <string name="action_clear_title">Clear</string>
     <string name="request_hint">What are you interested in?</string>
