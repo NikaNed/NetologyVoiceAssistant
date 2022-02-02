@@ -6,16 +6,24 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.ListView
 import android.widget.ProgressBar
 import android.widget.SimpleAdapter
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
+import com.wolfram.alpha.WAEngine
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+
 
 lateinit var requestInput: TextInputEditText
 lateinit var podsAdapter: SimpleAdapter
 lateinit var progressBar: ProgressBar
+lateinit var  waEngine: WAEngine
 
 var pods = mutableListOf<HashMap<String, String>>(
     HashMap<String, String>().apply {
@@ -41,6 +49,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         initView()
+        initWolframEngine()
 
     }
 
@@ -83,5 +92,27 @@ class MainActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    fun initWolframEngine (){
+        waEngine = WAEngine().apply {
+            appID = "7HWPYX-GHGY6U99L5"
+            addFormat("plaintext")
+        }
+    }
+    fun showSnackbar(message: String) {
+        Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_INDEFINITE).apply {
+            setAction(android.R.string.ok){
+            dismiss()
+        }
+            show()
+        }
+    }
+
+    fun askWolfram(request: String){
+        progressBar.visibility = View.VISIBLE
+        CoroutineScope(Dispatchers.IO).launch {
+
+        }
     }
 }
