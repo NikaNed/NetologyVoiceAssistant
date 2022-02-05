@@ -1,8 +1,11 @@
 package com.example.netologyvoiceassistant
 
-import android.icu.text.CaseMap
+
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.speech.RecognizerIntent
+import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -22,14 +25,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.lang.StringBuilder
+import java.util.*
+import kotlin.collections.HashMap
 
 
 lateinit var requestInput: TextInputEditText
 lateinit var podsAdapter: SimpleAdapter
 lateinit var progressBar: ProgressBar
 lateinit var waEngine: WAEngine
+lateinit var textToSpeech: TextToSpeech
+var isTtsReady: Boolean = false
+val VOICE_RECOGNITION_REQUEST_CODE = 111
 
-var pods = mutableListOf<HashMap<String, String>>()
+val pods = mutableListOf<HashMap<String, String>>()
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,6 +45,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         initView()
         initWolframEngine()
+        initTts()
     }
 
     private fun initView() {
@@ -66,10 +75,22 @@ class MainActivity : AppCompatActivity() {
             intArrayOf(R.id.title, R.id.content)
         )
         podsList.adapter = podsAdapter
+        podsList.setOnItemClickListener { parent, view, position, id ->
+            if (isTtsReady){
+                val title = pods[position]["Title"]
+                val content = pods[position]["Content"]
+                textToSpeech.speak(content, TextToSpeech.QUEUE_FLUSH,null,title)
+            }
+        }
 
         val voiceInputButton: FloatingActionButton = findViewById(R.id.voice_input_button)
         voiceInputButton.setOnClickListener {
-            Log.d("TAG", "FAB")
+            pods.clear()
+            podsAdapter.notifyDataSetChanged()
+            if (isTtsReady){
+                textToSpeech.stop()
+            }
+            showVoiceInputDialog()
         }
 
         progressBar = findViewById(R.id.progress_bar)
@@ -83,7 +104,9 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean { //чтобы на иконки можно нажимать
         when (item.itemId) {
             R.id.action_stop -> {
-                Log.d("TAG", "action_stop")
+                if (isTtsReady){
+                    textToSpeech.stop()
+                }
                 return true
             }
             R.id.action_clear -> {
@@ -96,14 +119,14 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    fun initWolframEngine() {
+    private fun initWolframEngine() {
         waEngine = WAEngine().apply {
             appID = "7HWPYX-GHGY6U99L5"
             addFormat("plaintext")
         }
     }
 
-    fun showSnackbar(message: String) {
+    private fun showSnackbar(message: String) {
         Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_INDEFINITE)
             .apply {
                 setAction(android.R.string.ok) {
@@ -113,7 +136,7 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
-    fun askWolfram(request: String) {
+    private fun askWolfram(request: String) {
         progressBar.visibility = View.VISIBLE //показывает progressBar
         CoroutineScope(Dispatchers.IO).launch { //переходим в другой поток
             val query = waEngine.createQuery().apply { input = request }
@@ -155,6 +178,40 @@ class MainActivity : AppCompatActivity() {
                     showSnackbar(t.message ?: getString(R.string.error_something_went_wrong))
 
                 }
+            }
+        }
+    }
+    fun initTts(){
+        textToSpeech = TextToSpeech(this){ code->
+            if (code != TextToSpeech.SUCCESS){
+                Log.e("TAG","Tts error code: $code")
+                showSnackbar(getString(R.string.action_tts_is_not_ready))
+            } else{
+                isTtsReady = true
+            }
+        }
+        textToSpeech.language = Locale.US
+    }
+    fun showVoiceInputDialog(){
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+            putExtra(RecognizerIntent.EXTRA_PROMPT,getString(R.string.request_hint))
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE,Locale.US)
+        }
+        runCatching {
+            startActivityForResult(intent, VOICE_RECOGNITION_REQUEST_CODE)
+
+        }.onFailure { t->
+            showSnackbar(t.message?:getString(R.string.error_voice_recognition_unavailable))
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == VOICE_RECOGNITION_REQUEST_CODE && resultCode == RESULT_OK){
+            data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.get(0)?.let { question ->
+                requestInput.setText(question)
+                askWolfram(question)
             }
         }
     }
