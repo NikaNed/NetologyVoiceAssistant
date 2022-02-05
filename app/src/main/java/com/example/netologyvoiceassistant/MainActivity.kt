@@ -85,8 +85,8 @@ class MainActivity : AppCompatActivity() {
 
         val voiceInputButton: FloatingActionButton = findViewById(R.id.voice_input_button)
         voiceInputButton.setOnClickListener {
-            pods.clear()
-            podsAdapter.notifyDataSetChanged()
+            pods.clear() // отчищаем список с ответами
+            podsAdapter.notifyDataSetChanged() // обновляем список
             if (isTtsReady){
                 textToSpeech.stop()
             }

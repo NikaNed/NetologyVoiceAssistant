@@ -3,11 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Nika/AndroidStudioProjects/NetologyVoiceAssistant/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.14322916666666666" />
         <entry key="..\:/Users/Nika/AndroidStudioProjects/NetologyVoiceAssistant/app/src/main/res/drawable/ic_baseline_clear_all_24.xml" value="0.10925925925925926" />
         <entry key="..\:/Users/Nika/AndroidStudioProjects/NetologyVoiceAssistant/app/src/main/res/drawable/ic_baseline_keyboard_voice_24.xml" value="0.10925925925925926" />
+        <entry key="..\:/Users/Nika/AndroidStudioProjects/NetologyVoiceAssistant/app/src/main/res/drawable/ic_launcher_background.xml" value="0.14322916666666666" />
         <entry key="..\:/Users/Nika/AndroidStudioProjects/NetologyVoiceAssistant/app/src/main/res/layout/activity_main.xml" value="0.2" />
         <entry key="..\:/Users/Nika/AndroidStudioProjects/NetologyVoiceAssistant/app/src/main/res/layout/item_pod.xml" value="0.264" />
         <entry key="..\:/Users/Nika/AndroidStudioProjects/NetologyVoiceAssistant/app/src/main/res/menu/menu_toolbar.xml" value="0.25" />
+        <entry key="..\:/Users/Nika/AndroidStudioProjects/NetologyVoiceAssistant/app/src/main/res/mipmap-anydpi-v26/ic_launcher_logo.xml" value="0.26614583333333336" />
       </map>
     </option>
   </component>

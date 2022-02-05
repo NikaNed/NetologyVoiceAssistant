@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">NetVoice</string>
+    <string name="app_name">НеоГолос</string>
     <string name="action_stop_title">Стоп</string>
     <string name="action_clear_title">Отчистить</string>
     <string name="request_hint">Что вы ищете?</string>
