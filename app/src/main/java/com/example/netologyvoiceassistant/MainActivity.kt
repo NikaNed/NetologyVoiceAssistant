@@ -3,26 +3,41 @@ package com.example.netologyvoiceassistant
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.TextView
+import android.view.Menu
+import android.view.MenuItem
+import com.google.android.material.appbar.MaterialToolbar
 
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-
-        val tag: String = "MainActivity"
-        Log.d(tag, "start of onCreate function")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        initView()
 
-        val name: String = "Ivan"
-        val surname: String = "Ivanov"
-        var age: Int = 37
-        var height: Double = 172.2
+    }
 
-        val summary = "name: $name surname: $surname age: $age height: $height"
+    private fun initView(){
+        val toolbar = findViewById<MaterialToolbar>(R.id.toolbar) //связываем переменную с тем,
+        // что отражается на экране
+        setSupportActionBar(toolbar) //связываем toolbar с приложением
+    }
 
-        val output: TextView = findViewById(R.id.output)
-        output.text = summary
-        Log.d(tag, "end of onCreate function")
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean { //переопределяем метод
+        menuInflater.inflate(R.menu.menu_toolbar,menu)//объект отрисовывает приложение
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean { //чтобы на иконки можно нажимать
+        when(item.itemId){
+            R.id.action_stop -> {
+                Log.d("TAG","action_stop")
+                return true
+            }
+            R.id.action_clear -> {
+                Log.d("TAG","action_clear")
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }
